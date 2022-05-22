@@ -1,12 +1,14 @@
+// run `tsc` any time you modify this file to transpile it to javascript
+
 import axios from "axios";
 import { Wallet, SecretNetworkClient, fromUtf8 } from "secretjs";
 import fs from "fs";
 
+// Create a client to interact with the network
 export const initializeClient = async (endpoint: string, chainId: string, mnemonic: string) => {
     const wallet = new Wallet(mnemonic);
     const accAddress = wallet.address;
     const client = await SecretNetworkClient.create({
-      // Create a client to interact with the network
       grpcWebUrl: endpoint,
       chainId: chainId,
       wallet: wallet,
@@ -23,7 +25,7 @@ export const initializeClient = async (endpoint: string, chainId: string, mnemon
     return client;
   };
 
-// Simulates storing a contract to estimate the gas required
+// Simulate storing a contract to estimate the gas required
 export const simulateStoreContract = async (
     client: SecretNetworkClient,
     contractPath: string
@@ -38,16 +40,13 @@ export const simulateStoreContract = async (
         source: "", // you should really include this :)
         builder: "", // you should really include this :)
       },
-      {
-        gasLimit: 2000000,
-      }
     );
   
     const gasUsed = sim.gasInfo?.gasUsed;;
     console.log(`Estimated Gas Used: ${gasUsed}`);
   };
 
-// Stores a new contract on testnet
+// Store a new contract on testnet
 export const storeContract = async (
   client: SecretNetworkClient,
   contractPath: string
@@ -63,7 +62,7 @@ export const storeContract = async (
       builder: "",
     },
     {
-      gasLimit: 5000000,
+      gasLimit: 2000000,
     }
   );
 
@@ -81,10 +80,10 @@ export const storeContract = async (
   );
 
   const gasWanted = uploadReceipt.gasWanted;
-  console.log("Contract codeId: ", gasWanted);
+  console.log("Gas Wanted: ", gasWanted);
 
   const gasUsed = uploadReceipt.gasUsed;
-  console.log("Contract codeId: ", gasUsed);
+  console.log("Gas Used: ", gasUsed);
 
   const codeId = Number(codeIdKv!.value);
   console.log("Contract codeId: ", codeId);
